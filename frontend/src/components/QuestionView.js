@@ -12,7 +12,7 @@ class QuestionView extends Component {
       questions: [],
       page: 1,
       totalQuestions: 0,
-      categories: {},
+      categories: [],
       currentCategory: null,
     }
   }
@@ -28,9 +28,11 @@ class QuestionView extends Component {
       success: (result) => {
         this.setState({
           questions: result.questions,
-          totalQuestions: result.total_questions,
           categories: result.categories,
-          currentCategory: result.current_category })
+          totalQuestions: result.total_questions,
+          // currentCategory: result.current_category 
+
+        })
         return;
       },
       error: (error) => {
@@ -65,9 +67,11 @@ class QuestionView extends Component {
       success: (result) => {
         this.setState({
           questions: result.questions,
-          totalQuestions: result.total_questions,
-          currentCategory: result.current_category })
+          // totalQuestions: result.total_questions,
+          // currentCategory: result.current_category 
+        })
         return;
+
       },
       error: (error) => {
         alert('Unable to load questions. Please try your request again')
@@ -125,10 +129,9 @@ class QuestionView extends Component {
         <div className="categories-list">
           <h2 onClick={() => {this.getQuestions()}}>Categories</h2>
           <ul>
-            {Object.keys(this.state.categories).map((id, ) => (
-              <li key={id} onClick={() => {this.getByCategory(id)}}>
-                {this.state.categories[id]}
-                <img className="category" src={`${this.state.categories[id]}.svg`}/>
+            {(this.state.categories).map((id, ) => (
+              <li key={id['id']} onClick={() => {this.getByCategory(id['category'])}}>
+                {id['category']}
               </li>
             ))}
           </ul>
@@ -137,14 +140,16 @@ class QuestionView extends Component {
         <div className="questions-list">
           <h2>Questions</h2>
           {this.state.questions.map((q, ind) => (
+             console.log(q.category),
             <Question
               key={q.id}
               question={q.question}
               answer={q.answer}
-              category={this.state.categories[q.category]} 
+              category={q.category} 
               difficulty={q.difficulty}
               questionAction={this.questionAction(q.id)}
             />
+
           ))}
           <div className="pagination-menu">
             {this.createPagination()}
@@ -152,6 +157,7 @@ class QuestionView extends Component {
         </div>
 
       </div>
+
     );
   }
 }

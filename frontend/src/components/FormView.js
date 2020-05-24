@@ -11,16 +11,18 @@ class FormView extends Component {
       answer: "",
       difficulty: 1,
       category: 1,
-      categories: {}
+      categories: [],
+      totalcategories: 6
     }
   }
 
   componentDidMount(){
     $.ajax({
-      url: `/categories`, //TODO: update request URL
+      url: `/questions`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         this.setState({ categories: result.categories })
+
         return;
       },
       error: (error) => {
@@ -34,7 +36,7 @@ class FormView extends Component {
   submitQuestion = (event) => {
     event.preventDefault();
     $.ajax({
-      url: '/questions', //TODO: update request URL
+      url: '/questions/create', //TODO: update request URL
       type: "POST",
       dataType: 'json',
       contentType: 'application/json',
@@ -59,8 +61,11 @@ class FormView extends Component {
     })
   }
 
+
   handleChange = (event) => {
     this.setState({[event.target.name]: event.target.value})
+    console.log(this.state.category)
+    console.log(this.state.difficulty)
   }
 
   render() {
@@ -89,11 +94,12 @@ class FormView extends Component {
           <label>
             Category
             <select name="category" onChange={this.handleChange}>
-              {Object.keys(this.state.categories).map(id => {
-                  return (
-                    <option key={id} value={id}>{this.state.categories[id]}</option>
-                  )
-                })}
+               <option value="1">1</option>
+               <option value="2">2</option>
+               <option value="3">3</option>
+               <option value="4">4</option>
+               <option value="5">5</option>
+               <option value="6">6</option>
             </select>
           </label>
           <input type="submit" className="button" value="Submit" />
