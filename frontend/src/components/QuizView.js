@@ -5,6 +5,8 @@ import '../stylesheets/QuizView.css';
 
 const questionsPerPlay = 5; 
 
+// constructor and states
+
 class QuizView extends Component {
   constructor(props){
     super();
@@ -12,7 +14,7 @@ class QuizView extends Component {
         quizCategory: null,
         previousQuestions: [], 
         showAnswer: false,
-        categories: {},
+        categories: [],
         numCorrect: 0,
         currentQuestion: {},
         guess: '',
@@ -20,9 +22,10 @@ class QuizView extends Component {
     }
   }
 
+// load query after load page
   componentDidMount(){
     $.ajax({
-      url: `/categories`, //TODO: update request URL
+      url: `/questions`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         this.setState({ categories: result.categories })
@@ -35,6 +38,8 @@ class QuizView extends Component {
     })
   }
 
+
+
   selectCategory = ({type, id=0}) => {
     this.setState({quizCategory: {type, id}}, this.getNextQuestion)
   }
@@ -42,6 +47,8 @@ class QuizView extends Component {
   handleChange = (event) => {
     this.setState({[event.target.name]: event.target.value})
   }
+
+  // get the previous question and return the next question
 
   getNextQuestion = () => {
     const previousQuestions = [...this.state.previousQuestions]
@@ -105,17 +112,12 @@ class QuizView extends Component {
               <div className="choose-header">Choose Category</div>
               <div className="category-holder">
                   <div className="play-category" onClick={this.selectCategory}>ALL</div>
-                  {Object.keys(this.state.categories).map(id => {
-                  return (
-                    <div
-                      key={id}
-                      value={id}
-                      className="play-category"
-                      onClick={() => this.selectCategory({type:this.state.categories[id], id})}>
-                      {this.state.categories[id]}
-                    </div>
-                  )
-                })}
+                  <li key="1" onClick={() => {this.getByCategory(id['category'])}}></li>
+                  <li key="2" onClick={() => {this.getByCategory(id['category'])}}></li>
+                  <li key="3" onClick={() => {this.getByCategory(id['category'])}}></li>
+                  <li key="4" onClick={() => {this.getByCategory(id['category'])}}></li>
+                  <li key="5" onClick={() => {this.getByCategory(id['category'])}}></li>
+                  <li key="6" onClick={() => {this.getByCategory(id['category'])}}></li>
               </div>
           </div>
       )
