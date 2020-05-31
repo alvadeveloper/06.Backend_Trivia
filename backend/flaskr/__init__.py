@@ -13,6 +13,7 @@ def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
   setup_db(app)
+  db = SQLAlchemy(app)
   
   '''
   @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
@@ -40,6 +41,7 @@ def create_app(test_config=None):
     formatted_data = [d.format() for d in data]
 
     return jsonify({
+        "success": True,
         "questions": formatted_data[start:end],
         "categories": formatted_data[start:end],
         "totalQuestions": len(formatted_data[start:end])
@@ -117,6 +119,21 @@ def create_app(test_config=None):
         "categories": formatted_data[start:end]
         })
 
+
+  # Get category based on id 
+
+  @app.route('/categories', methods=['GET'])
+  def show_categories():
+
+      result = list(map(Category.format, Category.query.all()))
+
+      return jsonify({
+          "success" : True,
+          "categories" : result
+        })
+      
+
+
   # Get questions based on category
 
   @app.route('/categories/<int:id>/questions', methods=['GET'])
@@ -130,6 +147,7 @@ def create_app(test_config=None):
       formatted_data = [d.format() for d in results]
 
       return jsonify ({
+        "success": True,
         "questions": formatted_data[start:end],
         "categories": formatted_data[start:end]
         })
@@ -150,6 +168,27 @@ def create_app(test_config=None):
       return jsonify ({
           'data': question
         })
+ 
+  # Get questions to front end
+
+  @app.route('/quizzes', methods=['POST'])
+  def getcurrent_questions():
+
+      body = request.get_json()
+
+      quiz_category = body.get('quiz_category')['id']
+      previous_questions = body.get('previous_questions')
+      result = (Question.query.filter_by(category=quiz_category).filter(Question.id.notin_(previous_questions)).all())
+      if (len(result) > 0):
+        formatted_data = [d.format() for d in result]
+        question = random.choice(formatted_data)
+      else:
+        question = False
+
+      return jsonify({
+          'question' : question
+        })
+
 
   # error handling
 

@@ -5,8 +5,6 @@ import '../stylesheets/QuizView.css';
 
 const questionsPerPlay = 5; 
 
-// constructor and states
-
 class QuizView extends Component {
   constructor(props){
     super();
@@ -22,14 +20,13 @@ class QuizView extends Component {
     }
   }
 
-// load query after load page
   componentDidMount(){
     $.ajax({
-      url: `/questions`, //TODO: update request URL
+      url: `/categories`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         this.setState({ categories: result.categories })
-        return;
+        return;       
       },
       error: (error) => {
         alert('Unable to load categories. Please try your request again')
@@ -38,8 +35,6 @@ class QuizView extends Component {
     })
   }
 
-
-
   selectCategory = ({type, id=0}) => {
     this.setState({quizCategory: {type, id}}, this.getNextQuestion)
   }
@@ -47,8 +42,6 @@ class QuizView extends Component {
   handleChange = (event) => {
     this.setState({[event.target.name]: event.target.value})
   }
-
-  // get the previous question and return the next question
 
   getNextQuestion = () => {
     const previousQuestions = [...this.state.previousQuestions]
@@ -68,6 +61,7 @@ class QuizView extends Component {
       },
       crossDomain: true,
       success: (result) => {
+        console.log(result)
         this.setState({
           showAnswer: false,
           previousQuestions: previousQuestions,
@@ -112,12 +106,12 @@ class QuizView extends Component {
               <div className="choose-header">Choose Category</div>
               <div className="category-holder">
                   <div className="play-category" onClick={this.selectCategory}>ALL</div>
-                  <li key="1" onClick={() => {this.getByCategory(id['category'])}}></li>
-                  <li key="2" onClick={() => {this.getByCategory(id['category'])}}></li>
-                  <li key="3" onClick={() => {this.getByCategory(id['category'])}}></li>
-                  <li key="4" onClick={() => {this.getByCategory(id['category'])}}></li>
-                  <li key="5" onClick={() => {this.getByCategory(id['category'])}}></li>
-                  <li key="6" onClick={() => {this.getByCategory(id['category'])}}></li>
+                  {(this.state.categories).map(r => {
+                    return(
+                    <div key={r.id} value={r.id} className="play-category" onClick={()=>this.selectCategory({type: r.type, id: r.id})}>
+                    {r.type}
+                    </div>)
+                  })}
               </div>
           </div>
       )
@@ -134,7 +128,10 @@ class QuizView extends Component {
 
   evaluateAnswer = () => {
     const formatGuess = this.state.guess.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").toLowerCase()
-    const answerArray = this.state.currentQuestion.answer.toLowerCase().split(' ');
+    const answerArray = this.state.currentQuestion.answer.toLowerCase();
+    // console.log(formatGuess)
+    // console.log(answerArray)
+    // console.log(answerArray.includes(formatGuess))
     return answerArray.includes(formatGuess)
   }
 
@@ -152,6 +149,9 @@ class QuizView extends Component {
   }
 
   renderPlay(){
+    // console.log(this.state.currentQuestion)
+    // console.log(this.state.previousQuestions.length)
+
     return this.state.previousQuestions.length === questionsPerPlay || this.state.forceEnd
       ? this.renderFinalScore()
       : this.state.showAnswer 
