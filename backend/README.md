@@ -72,9 +72,13 @@ This README is missing documentation of your endpoints. Below is an example for 
 
 Endpoints
 GET '/categories'
-GET ...
-POST ...
-DELETE ...
+GET '/questions'
+GET '/categories/<int:id>/questions'
+POST '/questions/create'
+POST '/questions'
+POST '/questions/randomsearch'
+POST '/quizzes'
+DELETE '/questions/<int:id>'
 
 GET '/categories'
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
@@ -86,6 +90,92 @@ GET '/categories'
 '4' : "History",
 '5' : "Entertainment",
 '6' : "Sports"}
+
+GET '/questions'
+- Fetches all lists of questions in which the keys are question, answer, difficulty, category and id
+- Request Arguments: None
+- Returns: An array of objects, in which including question: string , answer: string, difficulty: string, category: string, id : string pairs.
+{
+"answer": "Muhammad Ali",
+"category": 4,
+"difficulty": 1,
+"id": 9,
+ "question": "What boxer's original name is Cassius Clay?"
+},
+
+GET '/categories/<int:id>/questions'
+- Fetch lists of question that in the same category in which the keys are question, answer, difficulty, category and id
+- Request Arguments: id : Integer
+- Returns An array of objects, in which including the question:string, answer:string, difficulty: string, category:string, id:string in same id of category
+{
+"answer": "The Liver",
+"category": 1,
+"difficulty": 4,
+"id": 20,
+"question": "What is the heaviest organ in the human body?"
+},
+
+POST '/questions/create'
+- SEND an object including keys with questions: string, answer:string, category: string, difficulty: string to the server
+- Request Arguments: NOne
+- Return : After success create the data in the databse, a JSON with key success: True , and the all questions will be returned
+{
+"answer": "Muhammad Ali",
+"category": 4,
+"difficulty": 1,
+"id": 9,
+ "question": "What boxer's original name is Cassius Clay?"
+}
+
+POST '/questions'
+- SEND an string in search_term to compare the value in all keys of questions
+- Request Arugmnets: None
+- Return : After success post the data , it returns the finding similar to the search_term words, as below search for "who"
+{
+"answer": "George Washington Carver",
+"category": 4,
+"difficulty": 2,
+"id": 12,
+"question": "Who invented Peanut Butter?"
+},
+{
+"answer": "Alexander Fleming",
+"category": 1,
+"difficulty": 3,
+"id": 21,
+"question": "Who discovered penicillin?"
+}
+
+POST '/questions/randomsearch'
+- SEND a string to get a question from all the return results in the specific category
+- Request Argument: None
+- Return: After success send the data, it returns a question that in the specific catagory in which including the question:string, answer:string, difficulty: string, category:string, id:string
+{
+"answer": "Jackson Pollock",
+"category": 2,
+"difficulty": 2,
+"id": 19,
+"question": "Which American artist was a pioneer of Abstract Expressionism, and a leading exponent of action painting?"
+}
+
+POST 'quizzes'
+- SEND a string from 1 - 6 as the category number and array of previous question to get back a question in that category that did not repeat more than once
+- Request Argument: None
+- Return: After success send the data, it returns a question that in the specific catagory in which including the question:string, answer:string, difficulty: string, category:string, id:string , and the question just return once.
+{
+"answer": "Jackson Pollock",
+"category": 2,
+"difficulty": 2,
+"id": 19,
+"question": "Which American artist was a pioneer of Abstract Expressionism, and a leading exponent of action painting?"
+}
+
+ERROR HANDLING
+The API will return four error types when request failed:
+404: resource not found
+422: unprocessable
+400: bad request
+405: method not allowed
 
 ```
 
